@@ -1,8 +1,8 @@
-import { error } from "@sveltejs/kit";
+import { error } from '@sveltejs/kit';
 import * as v from 'valibot';
 import * as _ from 'radashi';
 
-import { makeCommander } from "$lib/index.ts"
+import { makeCommander } from '$lib/index.ts';
 
 import responses from './responses.ts';
 
@@ -20,7 +20,6 @@ export const getSecret = PromiseCommander.query(promiseSchema, async () => {
 	return json.text;
 });
 
-
 const nameSchema = v.object({
 	name: v.pipe(v.string(), v.nonEmpty(), v.toLowerCase())
 });
@@ -37,7 +36,6 @@ const NameCommander = makeCommander<typeof nameSchema>(({ data }) => {
 export const checkName = NameCommander.form(nameSchema, async () => {
 	return _.draw(responses.trustName)!;
 });
-
 
 const CookieCommander = makeCommander(({ event }) => {
 	if (!event.cookies.get('is_protected')) {

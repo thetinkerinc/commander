@@ -2,11 +2,7 @@ import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type { RemoteQueryFunction, RequestEvent } from '@sveltejs/kit';
 
 export type ProtectedQuery = {
-	<
-		TReturn,
-		TProtector extends (event: RequestEvent) => any,
-		TCtx = ReturnType<TProtector>
-	>(
+	<TReturn, TProtector extends (event: RequestEvent) => any, TCtx = ReturnType<TProtector>>(
 		schemaOrFn: (args: { ctx: TCtx }) => TReturn,
 		fn?: undefined
 	): RemoteQueryFunction<void, TReturn>;

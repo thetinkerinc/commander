@@ -2,6 +2,6 @@
 let { children, ...rest } = $props();
 </script>
 
-<button class="bg-amber-600 px-3 py-1 rounded shadow cursor-pointer" {...rest}>
+<button class="cursor-pointer rounded bg-amber-600 px-3 py-1 shadow" {...rest}>
 	{@render children()}
 </button>

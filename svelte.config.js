@@ -10,7 +10,7 @@ const config = {
 			remoteFunctions: true
 		},
 		alias: {
-			'$utils': './src/utils'
+			$utils: './src/utils'
 		}
 	},
 	compilerOptions: {

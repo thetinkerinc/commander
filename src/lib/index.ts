@@ -4,7 +4,9 @@ import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { ProtectedQuery } from './types.ts';
 
-function makeCommander<T extends StandardSchemaV1>(protect: (args: { event: RequestEvent, data?: StandardSchemaV1.InferOutput<T> }) => any) {
+function makeCommander<T extends StandardSchemaV1>(
+	protect: (args: { event: RequestEvent; data?: StandardSchemaV1.InferOutput<T> }) => any
+) {
 	return {
 		query: makeProtectedQuery(protect),
 		form: makeProtectedForm(protect),
@@ -14,10 +16,10 @@ function makeCommander<T extends StandardSchemaV1>(protect: (args: { event: Requ
 
 function makeProtectedQuery<
 	TSchema extends Parameters<typeof query>[0],
-    TReturn,
-    TProtector extends (args: { event: RequestEvent, data?: TParams }) => any,
-    TCtx = ReturnType<TProtector>,
-    TParams = StandardSchemaV1.InferOutput<TSchema>
+	TReturn,
+	TProtector extends (args: { event: RequestEvent; data?: TParams }) => any,
+	TCtx = ReturnType<TProtector>,
+	TParams = StandardSchemaV1.InferOutput<TSchema>
 >(protect: TProtector): ProtectedQuery {
 	return (
 		schemaOrFn: TSchema | ((args: { ctx: TCtx }) => TReturn),
@@ -41,10 +43,10 @@ function makeProtectedQuery<
 
 function makeProtectedForm<
 	TSchema extends Parameters<typeof form>[0],
-    TReturn,
-    TProtector extends (args: { event: RequestEvent, data: TData }) => any,
-    TCtx = ReturnType<TProtector>,
-    TData = StandardSchemaV1.InferOutput<TSchema>
+	TReturn,
+	TProtector extends (args: { event: RequestEvent; data: TData }) => any,
+	TCtx = ReturnType<TProtector>,
+	TData = StandardSchemaV1.InferOutput<TSchema>
 >(protect: TProtector) {
 	return (schema: TSchema, fn: (args: { ctx: TCtx; data: TData }) => TReturn) => {
 		return form(schema, (data) => {
@@ -56,10 +58,10 @@ function makeProtectedForm<
 
 function makeProtectedCommand<
 	TSchema extends Parameters<typeof form>[0],
-    TReturn,
-    TProtector extends (args: { event: RequestEvent, data: TData }) => any,
-    TCtx = ReturnType<TProtector>,
-    TData = StandardSchemaV1.InferOutput<TSchema>
+	TReturn,
+	TProtector extends (args: { event: RequestEvent; data: TData }) => any,
+	TCtx = ReturnType<TProtector>,
+	TData = StandardSchemaV1.InferOutput<TSchema>
 >(protect: TProtector) {
 	return (schema: TSchema, fn: (args: { ctx: TCtx; data: TData }) => TReturn) => {
 		return command(schema, (data) => {

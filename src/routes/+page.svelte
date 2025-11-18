@@ -17,7 +17,7 @@ import Button from './button.svelte';
 import type { TransitionConfig } from 'svelte/transition';
 
 type ResponseType = keyof typeof responses & keyof typeof errors;
-type CheckNameEnhanceParams = Parameters<Parameters<typeof checkName.enhance>[0]>[0]
+type CheckNameEnhanceParams = Parameters<Parameters<typeof checkName.enhance>[0]>[0];
 
 onMount(() => {
 	jar.remove('is_protected');
@@ -45,8 +45,7 @@ async function query() {
 	try {
 		resetField('query');
 		responses.query = await getSecret(promised);
-	}
-	catch(err) {
+	} catch (err) {
 		handleError(err, 'query');
 	}
 }
@@ -56,11 +55,9 @@ async function enhance({ form, submit }: CheckNameEnhanceParams) {
 		resetField('form');
 		await submit();
 		responses.form = checkName.result as string;
-	}
-	catch(err) {
+	} catch (err) {
 		handleError(err, 'form');
-	}
-	finally {
+	} finally {
 		form.reset();
 	}
 }
@@ -68,9 +65,8 @@ async function enhance({ form, submit }: CheckNameEnhanceParams) {
 async function command() {
 	try {
 		resetField('command');
-		responses.command = await adventure({}) as string;
-	}
-	catch(err) {
+		responses.command = (await adventure({})) as string;
+	} catch (err) {
 		handleError(err, 'command');
 	}
 }
@@ -80,8 +76,7 @@ function toggleCookie() {
 	hasCookie = !hasCookie;
 	if (hasCookie) {
 		jar.set('is_protected', 'true');
-	}
-	else {
+	} else {
 		jar.remove('is_protected');
 	}
 }
@@ -99,18 +94,20 @@ function handleError(err: unknown, type: ResponseType) {
 	errors[type] = true;
 	if (isHttpError(err, 403)) {
 		responses[type] = err.body.message;
-	}
-	else {
-		responses[type] = 'Something actually went wrong and we\'re working to fix it!';
+	} else {
+		responses[type] = "Something actually went wrong and we're working to fix it!";
 	}
 }
 
-function shrink(node: HTMLElement, { duration = 200 }: { duration?: number } = {}): TransitionConfig {
-	const w = node.offsetWidth
+function shrink(
+	node: HTMLElement,
+	{ duration = 200 }: { duration?: number } = {}
+): TransitionConfig {
+	const w = node.offsetWidth;
 	return {
 		duration,
 		css: (t) => `width: ${t * w}px`
-	}
+	};
 }
 </script>
 
@@ -121,13 +118,13 @@ function shrink(node: HTMLElement, { duration = 200 }: { duration?: number } = {
 	<img class="w-[200px]" src="/logo.png" alt="Knight holding a spear guarding a door" />
 	<div class="flex flex-col justify-center">
 		<div class="text-[70px] leading-[normal] font-medium">Commander</div>
-		<div class="text-[30px] leading-[normal] italic text-gray-600 ml-1">
+		<div class="ml-1 text-[30px] leading-[normal] text-gray-600 italic">
 			Keep out unwanted guests
 		</div>
 	</div>
 </div>
 
-<div class="flex flex-wrap justify-around gap-4 mx-auto mt-10">
+<div class="mx-auto mt-10 flex flex-wrap justify-around gap-4">
 	<Card>
 		<div>Query</div>
 		<div>Swear the oath to retrieve a secret</div>
@@ -143,10 +140,7 @@ function shrink(node: HTMLElement, { duration = 200 }: { duration?: number } = {
 
 	<Card>
 		<div>Form</div>
-		<div>
-			What can I call you? I only trust travellers
-			with a good, strong name like Sam
-		</div>
+		<div>What can I call you? I only trust travellers with a good, strong name like Sam</div>
 		{#if responses.form}
 			<div class={[errors.form && 'text-red-600']}>{responses.form}</div>
 			<Button onclick={resetForm}>Try again</Button>
@@ -162,12 +156,10 @@ function shrink(node: HTMLElement, { duration = 200 }: { duration?: number } = {
 
 	<Card>
 		<div>Command</div>
-		<div>
-			It's dangerous to go alone! Take this
-		</div>
+		<div>It's dangerous to go alone! Take this</div>
 		<div>
 			<button
-				class="w-full flex items-center gap-2 cursor-pointer justify-center"
+				class="flex w-full cursor-pointer items-center justify-center gap-2"
 				onclick={toggleCookie}>
 				<Cookie />
 				{#if !hasCookie}
@@ -180,7 +172,7 @@ function shrink(node: HTMLElement, { duration = 200 }: { duration?: number } = {
 				{/if}
 				<Backpack />
 				{#if hasCookie}
-					<div class="text-green-500" in:fade={{duration: 500}}>
+					<div class="text-green-500" in:fade={{ duration: 500 }}>
 						<Check />
 					</div>
 				{/if}
