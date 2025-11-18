@@ -4,4 +4,6 @@ import '../app.css';
 let { children } = $props();
 </script>
 
-{@render children()}
+<div class="p-2">
+	{@render children()}
+</div>
