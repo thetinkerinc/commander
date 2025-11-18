@@ -1,3 +1,5 @@
+import { query } from '$app/server';
+
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type { RemoteQueryFunction, RequestEvent } from '@sveltejs/kit';
 

@@ -6,6 +6,7 @@ import { makeCommander } from '$lib/index.ts';
 
 import responses from './responses.ts';
 
+// Query
 const promiseSchema = v.boolean();
 
 const PromiseCommander = makeCommander<typeof promiseSchema>(({ data }) => {
@@ -20,6 +21,8 @@ export const getSecret = PromiseCommander.query(promiseSchema, async () => {
 	return json.text;
 });
 
+
+// Form
 const nameSchema = v.object({
 	name: v.pipe(v.string(), v.nonEmpty(), v.toLowerCase())
 });
@@ -37,12 +40,14 @@ export const checkName = NameCommander.form(nameSchema, async () => {
 	return _.draw(responses.trustName)!;
 });
 
+
+// Command
 const CookieCommander = makeCommander(({ event }) => {
 	if (!event.cookies.get('is_protected')) {
-		error(403, 'Bad');
+		error(403, "I'm sorry, but it is too dangerous for you");
 	}
 });
 
 export const adventure = CookieCommander.command(v.object({}), async () => {
-	return 'Hello';
+	return 'Welcome, brave wanderer!';
 });

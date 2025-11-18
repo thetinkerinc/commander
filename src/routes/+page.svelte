@@ -147,7 +147,7 @@ function shrink(
 		{:else}
 			<form {...checkName.enhance(enhance)}>
 				<div>
-					<input {...checkName.fields.name.as('text')} />
+					<input class="px-2 py-1" {...checkName.fields.name.as('text')} />
 				</div>
 				<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
 			</form>
