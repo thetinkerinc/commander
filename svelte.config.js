@@ -8,6 +8,9 @@ const config = {
 		adapter: adapter(),
 		experimental: {
 			remoteFunctions: true
+		},
+		alias: {
+			'$utils': './src/utils'
 		}
 	},
 	compilerOptions: {
