@@ -18,9 +18,8 @@ const PromiseCommander = makeCommander<typeof promiseSchema>(({ data }) => {
 export const getSecret = PromiseCommander.query(promiseSchema, async () => {
 	const resp = await fetch('https://uselessfacts.jsph.pl/api/v2/facts/random');
 	const json = await resp.json();
-	return json.text;
+	return json.text as string;
 });
-
 
 // Form
 const nameSchema = v.object({
@@ -28,18 +27,17 @@ const nameSchema = v.object({
 });
 
 const NameCommander = makeCommander<typeof nameSchema>(({ data }) => {
-	if (data?.name !== 'sam' && data?.name?.includes('sam')) {
-		error(403, _.draw(responses.maybeName)!);
-	}
-	if (data?.name !== 'sam') {
+	if (data.name !== 'sam') {
+		if (data.name?.includes('sam')) {
+			error(403, _.draw(responses.maybeName)!);
+		}
 		error(403, _.draw(responses.badName)!);
 	}
 });
 
-export const checkName = NameCommander.form(nameSchema, async () => {
+export const checkName = NameCommander.form(nameSchema, () => {
 	return _.draw(responses.trustName)!;
 });
-
 
 // Command
 const CookieCommander = makeCommander(({ event }) => {
@@ -48,6 +46,6 @@ const CookieCommander = makeCommander(({ event }) => {
 	}
 });
 
-export const adventure = CookieCommander.command(v.object({}), async () => {
+export const adventure = CookieCommander.command(async () => {
 	return 'Welcome, brave wanderer!';
 });

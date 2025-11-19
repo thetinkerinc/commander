@@ -54,7 +54,9 @@ async function enhance({ form, submit }: CheckNameEnhanceParams) {
 	try {
 		resetField('form');
 		await submit();
-		responses.form = checkName.result as string;
+		if (checkName.result) {
+			responses.form = checkName.result;
+		}
 	} catch (err) {
 		handleError(err, 'form');
 	} finally {
@@ -65,7 +67,7 @@ async function enhance({ form, submit }: CheckNameEnhanceParams) {
 async function command() {
 	try {
 		resetField('command');
-		responses.command = (await adventure({})) as string;
+		responses.command = await adventure();
 	} catch (err) {
 		handleError(err, 'command');
 	}
