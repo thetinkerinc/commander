@@ -131,8 +131,10 @@ function shrink(
 		<div>Query</div>
 		<div>Swear the oath to retrieve a secret</div>
 		<div class="flex items-center gap-2">
-			<input type="checkbox" bind:checked={promised} />
-			<div>I solemnly swear that I am up to no good</div>
+			<label for="promised">
+				<input id="promised" type="checkbox" bind:checked={promised} />
+				I solemnly swear that I am up to no good
+			</label>
 		</div>
 		{#if responses.query}
 			<div class={[errors.query && 'text-red-600']} transition:fade>{responses.query}</div>
@@ -143,17 +145,23 @@ function shrink(
 	<Card>
 		<div>Form</div>
 		<div>What can I call you? I only trust travellers with a good, strong name like Sam</div>
-		{#if responses.form}
-			<div class={[errors.form && 'text-red-600']}>{responses.form}</div>
-			<Button onclick={resetForm}>Try again</Button>
-		{:else}
-			<form {...checkName.enhance(enhance)}>
-				<div>
-					<input class="px-2 py-1" {...checkName.fields.name.as('text')} />
+		<div class="grid">
+			{#if responses.form}
+				<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
+					<div class={[errors.form && 'text-red-600']}>{responses.form}</div>
+					<Button onclick={resetForm}>Try again</Button>
 				</div>
-				<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
-			</form>
-		{/if}
+			{:else}
+				<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
+					<form {...checkName.enhance(enhance)}>
+						<div>
+							<input class="px-2 py-1" {...checkName.fields.name.as('text')} />
+						</div>
+						<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
+					</form>
+				</div>
+			{/if}
+		</div>
 	</Card>
 
 	<Card>
