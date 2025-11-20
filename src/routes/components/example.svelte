@@ -1,6 +1,7 @@
 <script lang="ts">
 let { type, lines, help, children } = $props();
 
+import { tick } from 'svelte';
 import { fade } from 'svelte/transition';
 import QuestionBubble from '@lucide/svelte/icons/message-circle-question-mark';
 
@@ -8,7 +9,27 @@ import Card from './card.svelte';
 
 let button: HTMLButtonElement;
 
-let showHelp = $state<boolean>(false);
+let container = $state<HTMLDivElement>();
+let helpOpen = $state<boolean>(false);
+let nudge = $state<number>(0);
+
+async function toggleOpen() {
+	helpOpen = !helpOpen;
+	if (helpOpen) {
+		await tick();
+		if (!container) {
+			return;
+		}
+		nudge = 0;
+		const maxWidth = window.innerWidth - 20;
+		const bounds = container.getBoundingClientRect();
+		if (bounds.left <= 20) {
+			nudge = 20;
+		} else if (bounds.right >= maxWidth) {
+			nudge = maxWidth - bounds.right;
+		}
+	}
+}
 
 function handleWindowClick(evt: MouseEvent) {
 	let elem = evt.target as HTMLElement | null | undefined;
@@ -18,11 +39,14 @@ function handleWindowClick(evt: MouseEvent) {
 		}
 		elem = elem?.parentElement;
 	}
-	showHelp = false;
+	helpOpen = false;
 }
 </script>
 
-<svelte:window onclick={handleWindowClick} />
+<svelte:window
+	onclick={handleWindowClick}
+	onresize={() => (helpOpen = false)}
+	onscroll={() => (helpOpen = false)} />
 <Card>
 	<div class="mb-2 flex items-center gap-2">
 		<div class="flex-auto text-xl capitalize">{type}</div>
@@ -36,15 +60,14 @@ function handleWindowClick(evt: MouseEvent) {
 			<i class="fa-brands fa-github fa-lg translate-y-[1px]"></i>
 		</a>
 		<div class="relative">
-			<button
-				class="block cursor-pointer"
-				onclick={() => (showHelp = !showHelp)}
-				bind:this={button}>
+			<button class="block cursor-pointer" onclick={toggleOpen} bind:this={button}>
 				<QuestionBubble size={21} strokeWidth={2.5} />
 			</button>
-			{#if showHelp}
+			{#if helpOpen}
 				<div
-					class="absolute top-full left-1/2 w-max max-w-[300px] -translate-x-1/2 translate-y-[8px] rounded bg-white px-2 py-1 shadow"
+					class="absolute top-full left-1/2 w-max max-w-[300px] rounded bg-white px-2 py-1 shadow"
+					style="translate: calc(-50% + {nudge}px) 8px"
+					bind:this={container}
 					transition:fade={{ duration: 200 }}>
 					{@render help()}
 				</div>
