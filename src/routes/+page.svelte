@@ -11,10 +11,10 @@ import Check from '@lucide/svelte/icons/check';
 
 import { getSecret, checkName, adventure } from './data.remote.ts';
 
+import Example from './components/example.svelte';
 import Install from './components/install.svelte';
 import MakeCommander from './components/make-commander.svelte';
 import Remote from './components/remote.svelte';
-import Card from './components/card.svelte';
 import Button from './components/button.svelte';
 
 import type { TransitionConfig } from 'svelte/transition';
@@ -148,78 +148,95 @@ function shrink(
 <div>
 	<div class="mb-2 text-[20px] text-slate-700">Examples</div>
 	<div class="grid grid-cols-3 gap-4">
-		<Card>
-			<div>Query</div>
-			<div>Swear the oath to retrieve a secret</div>
-			<div class="flex items-center gap-2">
-				<label for="promised">
+		<Example type="query" lines="L9-L22">
+			<div class="text-gray-600 italic">Swear the oath to retrieve a secret</div>
+			<div class="my-1">
+				<label for="promised" class="flex items-center gap-2">
 					<input id="promised" type="checkbox" bind:checked={promised} />
 					I solemnly swear that I am up to no good
 				</label>
 			</div>
 			{#if responses.query}
-				<div class={[errors.query && 'text-red-600']} transition:fade>{responses.query}</div>
+				{@render response('query')}
 			{/if}
-			<Button onclick={query}>Reveal</Button>
-		</Card>
+			<div class="mt-2">
+				<Button onclick={query}>Reveal</Button>
+			</div>
 
-		<Card>
-			<div>Form</div>
-			<div>What can I call you? I only trust travellers with a good, strong name like Sam</div>
+			{#snippet help()}
+				Hello There everybody what are you doing here?
+			{/snippet}
+		</Example>
+
+		<Example type="form" lines="L24-L40">
+			<div class="mb-2 leading-tight text-gray-600 italic">
+				What can I call you? I only trust travellers with a good, strong name like Sam
+			</div>
 			<div class="grid">
 				{#if responses.form}
 					<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
-						<div class={[errors.form && 'text-red-600']}>{responses.form}</div>
+						{@render response('form')}
 						<Button onclick={resetForm}>Try again</Button>
 					</div>
 				{:else}
 					<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
 						<form {...checkName.enhance(enhance)}>
-							<div>
-								<input class="px-2 py-1" {...checkName.fields.name.as('text')} />
-							</div>
+							<input class="mb-1 block rounded px-2 py-1" {...checkName.fields.name.as('text')} />
 							<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
 						</form>
 					</div>
 				{/if}
 			</div>
-		</Card>
 
-		<Card>
-			<div>Command</div>
-			<div>It's dangerous to go alone! Take this</div>
-			<div>
-				<button
-					class="flex w-full cursor-pointer items-center justify-center gap-2"
-					onclick={toggleCookie}>
-					<Cookie />
-					{#if !hasCookie}
-						<div class="flex items-center overflow-hidden" transition:shrink>
-							<Dot />
-							<Dot />
-							<Dot />
-							<ChevronRight />
-						</div>
-					{/if}
-					<Backpack />
-					{#if hasCookie}
-						<div class="text-green-500" in:fade={{ duration: 500 }}>
-							<Check />
-						</div>
-					{/if}
-				</button>
-			</div>
+			{#snippet help()}
+				Hello There everybody what are you doing here?
+			{/snippet}
+		</Example>
+
+		<Example type="command" lines="L42-L51">
+			<div class="text-gray-600 italic">It's dangerous to go alone! Take this</div>
+			<button
+				class="my-4 flex w-full cursor-pointer items-center justify-center gap-2"
+				onclick={toggleCookie}>
+				<Cookie size={27} />
+				{#if !hasCookie}
+					<div class="flex items-center overflow-hidden" transition:shrink>
+						<Dot />
+						<Dot />
+						<Dot />
+						<ChevronRight />
+					</div>
+				{/if}
+				<Backpack size={27} />
+				{#if hasCookie}
+					<div class="text-green-500" in:fade={{ duration: 500 }}>
+						<Check />
+					</div>
+				{/if}
+			</button>
 			{#if responses.command}
-				<div class={[errors.command && 'text-red-600']} transition:fade>{responses.command}</div>
+				{@render response('command')}
 			{/if}
 			<Button onclick={command}>Adventure</Button>
-		</Card>
+
+			{#snippet help()}
+				Hello There everybody what are you doing here?
+			{/snippet}
+		</Example>
 	</div>
 </div>
 
-<div class="mt-4 flex flex-col gap-2">
-	<div class="text-[20px] text-slate-700">Setup</div>
-	<Install />
-	<MakeCommander />
-	<Remote />
+<div class="mt-5">
+	<div class="mb-2 text-[20px] text-slate-700">Setup</div>
+	<div class="flex flex-col gap-4">
+		<Install />
+		<MakeCommander />
+		<Remote />
+	</div>
 </div>
+
+{#snippet response(type: ResponseType)}
+	<div class={['my-1', !errors[type] && 'italic', errors[type] && 'text-red-600']} transition:fade>
+		{responses[type]}
+	</div>
+{/snippet}
