@@ -119,14 +119,17 @@ function shrink(
 <svelte:head>
 	<title>Commander</title>
 </svelte:head>
-<div class="flex justify-center gap-4 rounded-lg bg-slate-100 p-4">
-	<img class="w-[200px]" src="/logo.png" alt="Knight holding a spear guarding a door" />
+<div class="flex items-center justify-center gap-4 rounded-lg bg-slate-100 p-4">
+	<img
+		class="w-[100px] lg:w-[200px]"
+		src="/logo.png"
+		alt="Knight holding a spear guarding a door" />
 	<div class="flex flex-col justify-center">
-		<div class="text-[70px] leading-[normal] font-medium">Commander</div>
-		<div class="ml-1 text-[30px] leading-[normal] text-gray-600 italic">
+		<div class="text-[40px] leading-[normal] font-medium lg:text-[70px]">Commander</div>
+		<div class="ml-1 text-[20px] leading-[normal] text-gray-600 italic lg:text-[30px]">
 			Keep out unwanted guests
 		</div>
-		<div class="mt-3 flex items-center justify-center gap-6 text-[30px]">
+		<div class="mt-3 flex items-center justify-center gap-6 text-[25px] lg:text-[30px]">
 			<a href="https://github.com/thetinkerinc/commander" target="_blank" aria-label="Github">
 				<i class="fa-brands fa-github"></i>
 			</a>
@@ -147,7 +150,7 @@ function shrink(
 
 <div>
 	<div class="mb-2 text-[20px] text-slate-700">Examples</div>
-	<div class="grid grid-cols-3 gap-4">
+	<div class="grid grid-rows-3 gap-4 lg:grid-cols-3 lg:grid-rows-1">
 		<Example type="query" lines="L9-L22">
 			<div class="text-gray-600 italic">Swear the oath to retrieve a secret</div>
 			<div class="my-1">
