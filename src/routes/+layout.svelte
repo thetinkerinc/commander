@@ -4,6 +4,8 @@ import '../app.css';
 let { children } = $props();
 </script>
 
-<div class="mx-auto mt-4 mb-6 w-[90%] max-w-[1200px]">
-	{@render children()}
+<div class="bg-white">
+	<div class="mx-auto w-[90%] max-w-[1200px] pt-4 pb-6">
+		{@render children()}
+	</div>
 </div>

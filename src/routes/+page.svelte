@@ -152,7 +152,11 @@ function shrink(
 			<div class="text-gray-600 italic">Swear the oath to retrieve a secret</div>
 			<div class="my-1">
 				<label for="promised" class="flex items-center gap-2">
-					<input id="promised" type="checkbox" bind:checked={promised} />
+					<input
+						id="promised"
+						class="rounded border border-slate-300"
+						type="checkbox"
+						bind:checked={promised} />
 					I solemnly swear that I am up to no good
 				</label>
 			</div>
@@ -164,7 +168,7 @@ function shrink(
 			</div>
 
 			{#snippet help()}
-				Hello There everybody what are you doing here?
+				<div>This shows how to protect a query by making sure a certain value is passed along</div>
 			{/snippet}
 		</Example>
 
@@ -181,7 +185,9 @@ function shrink(
 				{:else}
 					<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
 						<form {...checkName.enhance(enhance)}>
-							<input class="mb-1 block rounded px-2 py-1" {...checkName.fields.name.as('text')} />
+							<input
+								class="mb-1 block rounded border border-slate-300 px-2 py-1"
+								{...checkName.fields.name.as('text')} />
 							<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
 						</form>
 					</div>
@@ -189,7 +195,7 @@ function shrink(
 			</div>
 
 			{#snippet help()}
-				Hello There everybody what are you doing here?
+				This validates various conditions of the submitted for data
 			{/snippet}
 		</Example>
 
@@ -220,7 +226,7 @@ function shrink(
 			<Button onclick={command}>Adventure</Button>
 
 			{#snippet help()}
-				Hello There everybody what are you doing here?
+				Checks for the presence of a cookie before performing the command action
 			{/snippet}
 		</Example>
 	</div>
