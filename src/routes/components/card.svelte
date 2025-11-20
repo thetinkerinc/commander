@@ -1,9 +1,7 @@
 <script lang="ts">
-import '../app.css';
-
 let { children } = $props();
 </script>
 
-<div class="mx-auto mt-4 mb-6 w-[90%] max-w-[1200px]">
+<div class="rounded bg-slate-100 px-4 py-2 shadow-md">
 	{@render children()}
 </div>

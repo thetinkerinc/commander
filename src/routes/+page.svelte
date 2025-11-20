@@ -11,8 +11,11 @@ import Check from '@lucide/svelte/icons/check';
 
 import { getSecret, checkName, adventure } from './data.remote.ts';
 
-import Card from './card.svelte';
-import Button from './button.svelte';
+import Install from './components/install.svelte';
+import MakeCommander from './components/make-commander.svelte';
+import Remote from './components/remote.svelte';
+import Card from './components/card.svelte';
+import Button from './components/button.svelte';
 
 import type { TransitionConfig } from 'svelte/transition';
 
@@ -116,81 +119,107 @@ function shrink(
 <svelte:head>
 	<title>Commander</title>
 </svelte:head>
-<div class="flex gap-4">
+<div class="flex justify-center gap-4 rounded-lg bg-slate-100 p-4">
 	<img class="w-[200px]" src="/logo.png" alt="Knight holding a spear guarding a door" />
 	<div class="flex flex-col justify-center">
 		<div class="text-[70px] leading-[normal] font-medium">Commander</div>
 		<div class="ml-1 text-[30px] leading-[normal] text-gray-600 italic">
 			Keep out unwanted guests
 		</div>
+		<div class="mt-3 flex items-center justify-center gap-6 text-[30px]">
+			<a href="https://github.com/thetinkerinc/commander" target="_blank" aria-label="Github">
+				<i class="fa-brands fa-github"></i>
+			</a>
+			<a
+				href="https://www.npmjs.com/package/@thetinkerinc/commander"
+				target="_blank"
+				aria-label="npm">
+				<i class="fa-brands fa-npm"></i>
+			</a>
+		</div>
 	</div>
 </div>
 
-<div class="mx-auto mt-10 flex flex-wrap justify-around gap-4">
-	<Card>
-		<div>Query</div>
-		<div>Swear the oath to retrieve a secret</div>
-		<div class="flex items-center gap-2">
-			<label for="promised">
-				<input id="promised" type="checkbox" bind:checked={promised} />
-				I solemnly swear that I am up to no good
-			</label>
-		</div>
-		{#if responses.query}
-			<div class={[errors.query && 'text-red-600']} transition:fade>{responses.query}</div>
-		{/if}
-		<Button onclick={query}>Reveal</Button>
-	</Card>
+<div class="mx-auto mt-5 max-w-[500px] text-center text-[20px]">
+	Commander is a SvelteKit utility library that lets you easily add customizable auth protection to
+	your remote functions
+</div>
 
-	<Card>
-		<div>Form</div>
-		<div>What can I call you? I only trust travellers with a good, strong name like Sam</div>
-		<div class="grid">
-			{#if responses.form}
-				<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
-					<div class={[errors.form && 'text-red-600']}>{responses.form}</div>
-					<Button onclick={resetForm}>Try again</Button>
-				</div>
-			{:else}
-				<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
-					<form {...checkName.enhance(enhance)}>
-						<div>
-							<input class="px-2 py-1" {...checkName.fields.name.as('text')} />
-						</div>
-						<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
-					</form>
-				</div>
+<div>
+	<div class="mb-2 text-[20px] text-slate-700">Examples</div>
+	<div class="grid grid-cols-3 gap-4">
+		<Card>
+			<div>Query</div>
+			<div>Swear the oath to retrieve a secret</div>
+			<div class="flex items-center gap-2">
+				<label for="promised">
+					<input id="promised" type="checkbox" bind:checked={promised} />
+					I solemnly swear that I am up to no good
+				</label>
+			</div>
+			{#if responses.query}
+				<div class={[errors.query && 'text-red-600']} transition:fade>{responses.query}</div>
 			{/if}
-		</div>
-	</Card>
+			<Button onclick={query}>Reveal</Button>
+		</Card>
 
-	<Card>
-		<div>Command</div>
-		<div>It's dangerous to go alone! Take this</div>
-		<div>
-			<button
-				class="flex w-full cursor-pointer items-center justify-center gap-2"
-				onclick={toggleCookie}>
-				<Cookie />
-				{#if !hasCookie}
-					<div class="flex items-center overflow-hidden" transition:shrink>
-						<Dot />
-						<Dot />
-						<Dot />
-						<ChevronRight />
+		<Card>
+			<div>Form</div>
+			<div>What can I call you? I only trust travellers with a good, strong name like Sam</div>
+			<div class="grid">
+				{#if responses.form}
+					<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
+						<div class={[errors.form && 'text-red-600']}>{responses.form}</div>
+						<Button onclick={resetForm}>Try again</Button>
+					</div>
+				{:else}
+					<div class="cell-1" in:fade={{ duration: 200, delay: 100 }} out:fade={{ duration: 200 }}>
+						<form {...checkName.enhance(enhance)}>
+							<div>
+								<input class="px-2 py-1" {...checkName.fields.name.as('text')} />
+							</div>
+							<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
+						</form>
 					</div>
 				{/if}
-				<Backpack />
-				{#if hasCookie}
-					<div class="text-green-500" in:fade={{ duration: 500 }}>
-						<Check />
-					</div>
-				{/if}
-			</button>
-		</div>
-		{#if responses.command}
-			<div class={[errors.command && 'text-red-600']} transition:fade>{responses.command}</div>
-		{/if}
-		<Button onclick={command}>Adventure</Button>
-	</Card>
+			</div>
+		</Card>
+
+		<Card>
+			<div>Command</div>
+			<div>It's dangerous to go alone! Take this</div>
+			<div>
+				<button
+					class="flex w-full cursor-pointer items-center justify-center gap-2"
+					onclick={toggleCookie}>
+					<Cookie />
+					{#if !hasCookie}
+						<div class="flex items-center overflow-hidden" transition:shrink>
+							<Dot />
+							<Dot />
+							<Dot />
+							<ChevronRight />
+						</div>
+					{/if}
+					<Backpack />
+					{#if hasCookie}
+						<div class="text-green-500" in:fade={{ duration: 500 }}>
+							<Check />
+						</div>
+					{/if}
+				</button>
+			</div>
+			{#if responses.command}
+				<div class={[errors.command && 'text-red-600']} transition:fade>{responses.command}</div>
+			{/if}
+			<Button onclick={command}>Adventure</Button>
+		</Card>
+	</div>
+</div>
+
+<div class="mt-4 flex flex-col gap-2">
+	<div class="text-[20px] text-slate-700">Setup</div>
+	<Install />
+	<MakeCommander />
+	<Remote />
 </div>

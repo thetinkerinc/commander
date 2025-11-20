@@ -57,6 +57,7 @@ export default defineConfig(
 			'no-mixed-spaces-and-tabs': 'off',
 			'no-control-regex': 'off',
 			'no-async-promise-executor': 'off',
+			'svelte/no-at-html-tags': 'off',
 			'@typescript-eslint/no-explicit-any': 'off',
 			'@typescript-eslint/no-unused-vars': [
 				'error',
