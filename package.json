@@ -1,6 +1,6 @@
 {
 	"name": "@thetinkerinc/commander",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite dev",
@@ -35,7 +35,7 @@
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0",
-		"svelte-clerk": "^0.18.1"
+		"@sveltejs/kit": "^2.49.0"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^2.0.0",
