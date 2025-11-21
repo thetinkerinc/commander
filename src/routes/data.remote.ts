@@ -17,8 +17,8 @@ const PromiseCommander = makeCommander<typeof promiseSchema>(({ data }) => {
 
 export const getSecret = PromiseCommander.query(promiseSchema, async () => {
 	const resp = await fetch('https://uselessfacts.jsph.pl/api/v2/facts/random');
-	const json = await resp.json();
-	return json.text as string;
+	const json = (await resp.json()) as { text: string };
+	return json.text;
 });
 
 // Form
