@@ -119,7 +119,7 @@ function shrink(
 <svelte:head>
 	<title>Commander</title>
 </svelte:head>
-<div class="flex items-center justify-center gap-4 rounded-lg bg-slate-100 p-4">
+<div class="relative flex items-center justify-center gap-4 rounded-lg bg-slate-100 p-4">
 	<img
 		class="w-[100px] lg:w-[200px]"
 		src="/logo.png"

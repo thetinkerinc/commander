@@ -2,6 +2,8 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer utilities {
 	.cell-1 {
 		grid-column: 1 / 1;
