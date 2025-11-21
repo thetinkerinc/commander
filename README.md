@@ -40,6 +40,14 @@ import { AuthenticatedCommander } from './commanders.ts';
 import { postSchema } from './schemas';
 import db from './db';
 
+export const getPosts = AuthenticatedCommander.query(async ({ ctx }) => {
+	return await db.getPosts({
+		where: {
+			user: ctx.userId
+		}
+	});
+});
+
 export const makePost = AuthenticatedCommander.form(postSchema, async ({ ctx, data }) => {
 	const post = {
 		...data,
