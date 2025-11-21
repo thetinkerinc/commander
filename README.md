@@ -49,11 +49,10 @@ export const getPosts = AuthenticatedCommander.query(async ({ ctx }) => {
 });
 
 export const makePost = AuthenticatedCommander.form(postSchema, async ({ ctx, data }) => {
-	const post = {
+	return await db.makePost({
 		...data,
 		user: ctx.userId
-	};
-	await db.makePost(post);
+	});
 });
 ```
 
