@@ -10,12 +10,10 @@ import type {
 } from '@sveltejs/kit';
 
 export type ProtectorWithoutSchema = (args: { event: RequestEvent }) => any;
-
 export type ProtectorWithSchema<TSchema extends StandardSchemaV1> = (args: {
 	event: RequestEvent;
 	data: StandardSchemaV1.InferOutput<TSchema>;
 }) => any;
-
 export type Protector<TSchema extends StandardSchemaV1 | undefined> = TSchema extends undefined
 	? ProtectorWithoutSchema
 	: ProtectorWithSchema<NonNullable<TSchema>>;
