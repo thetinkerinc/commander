@@ -9,7 +9,7 @@ import responses from './responses.ts';
 // Query
 const promiseSchema = v.boolean();
 
-const PromiseCommander = makeCommander<typeof promiseSchema>(({ data }) => {
+const PromiseCommander = makeCommander(promiseSchema, ({ data }) => {
 	if (!data) {
 		error(403, 'I will not reveal my secrets to you');
 	}
@@ -26,7 +26,7 @@ const nameSchema = v.object({
 	name: v.pipe(v.string(), v.nonEmpty(), v.toLowerCase())
 });
 
-const NameCommander = makeCommander<typeof nameSchema>(({ data }) => {
+const NameCommander = makeCommander(nameSchema, ({ data }) => {
 	if (data.name !== 'sam') {
 		if (data.name?.includes('sam')) {
 			error(403, _.draw(responses.maybeName)!);

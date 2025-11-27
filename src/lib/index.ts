@@ -1,18 +1,45 @@
 import { query, form, command, getRequestEvent } from '$app/server';
-
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import type { Protector, ProtectedQuery, ProtectedForm, ProtectedCommand } from './types.ts';
+import type {
+	ProtectorWithSchema,
+	ProtectorWithoutSchema,
+	ProtectedQuery,
+	ProtectedForm,
+	ProtectedCommand,
+	Commander
+} from './types.ts';
 
-function makeCommander<T extends StandardSchemaV1 | undefined = undefined>(protect: Protector<T>) {
-	return {
-		query: makeProtectedQuery(protect),
-		form: makeProtectedForm(protect),
-		command: makeProtectedCommand(protect)
-	};
+export function makeCommander<TCtx>(protector: ProtectorWithoutSchema<TCtx>): Commander<TCtx>;
+export function makeCommander<TSchema extends StandardSchemaV1, TCtx>(
+	schema: TSchema,
+	protector: ProtectorWithSchema<TSchema, TCtx>
+): Commander<TCtx>;
+export function makeCommander<TSchema extends StandardSchemaV1 | undefined, TCtx>(
+	schemaOrProtector: TSchema | ProtectorWithoutSchema<TCtx>,
+	protector?: ProtectorWithSchema<any, TCtx>
+): Commander<TCtx> {
+	if (typeof schemaOrProtector === 'function') {
+		const protect = schemaOrProtector as ProtectorWithoutSchema<TCtx>;
+		return {
+			query: makeProtectedQuery<TCtx>(protect),
+			form: makeProtectedForm<TCtx>(protect),
+			command: makeProtectedCommand<TCtx>(protect)
+		};
+	}
+	if (protector) {
+		const protect = protector as ProtectorWithSchema<any, TCtx>;
+		return {
+			query: makeProtectedQuery<TCtx>(protect),
+			form: makeProtectedForm<TCtx>(protect),
+			command: makeProtectedCommand<TCtx>(protect)
+		};
+	}
+
+	throw new Error('Invalid arguments to makeCommander');
 }
 
-function makeProtectedQuery(protect: any): ProtectedQuery {
-	return (schemaOrFn: any, fn?: any) => {
+function makeProtectedQuery<TCtx>(protect: any): ProtectedQuery<TCtx> {
+	return ((schemaOrFn: any, fn?: any) => {
 		if (typeof schemaOrFn === 'function') {
 			return query(() => {
 				const ctx = protect({ event: getRequestEvent() });
@@ -26,11 +53,11 @@ function makeProtectedQuery(protect: any): ProtectedQuery {
 			const ctx = protect({ event: getRequestEvent(), data: params });
 			return fn({ ctx, params });
 		});
-	};
+	}) as ProtectedQuery<TCtx>;
 }
 
-function makeProtectedForm(protect: any): ProtectedForm {
-	return (schemaOrFn: any, fn?: any) => {
+function makeProtectedForm<TCtx>(protect: any): ProtectedForm<TCtx> {
+	return ((schemaOrFn: any, fn?: any) => {
 		if (typeof schemaOrFn === 'function') {
 			return form(() => {
 				const ctx = protect({ event: getRequestEvent() });
@@ -44,11 +71,11 @@ function makeProtectedForm(protect: any): ProtectedForm {
 			const ctx = protect({ event: getRequestEvent(), data });
 			return fn({ ctx, data });
 		});
-	};
+	}) as ProtectedForm<TCtx>;
 }
 
-function makeProtectedCommand(protect: any): ProtectedCommand {
-	return (schemaOrFn: any, fn?: any) => {
+function makeProtectedCommand<TCtx>(protect: any): ProtectedCommand<TCtx> {
+	return ((schemaOrFn: any, fn?: any) => {
 		if (typeof schemaOrFn === 'function') {
 			return command(() => {
 				const ctx = protect({ event: getRequestEvent() });
@@ -62,7 +89,5 @@ function makeProtectedCommand(protect: any): ProtectedCommand {
 			const ctx = protect({ event: getRequestEvent(), data });
 			return fn({ ctx, data });
 		});
-	};
+	}) as ProtectedCommand<TCtx>;
 }
-
-export { makeCommander };
