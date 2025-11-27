@@ -88,7 +88,7 @@ const postSchema = v.object({
 	body: v.pipe(v.string(), v.maxLength(256))
 });
 
-const commander = makeCommander<typeof postSchema>(({ event, data }) => {
+const commander = makeCommander(postSchema, ({ event, data }) => {
 	// data is guaranteed to conform to postSchema
 	const userId = event.cookies.get('user_id');
 	if (!userId) {
@@ -97,14 +97,14 @@ const commander = makeCommander<typeof postSchema>(({ event, data }) => {
 	return userId;
 });
 
-export const createPost = commander.form(formSchema, ({ ctx, data }) => {
+export const createPost = commander.form(postSchema, ({ ctx, data }) => {
 	await db.createPost({
 		...data,
 		userId: ctx
 	});
 });
 
-export const updatePost = commander.form(formSchema, ({ data }) => {
+export const updatePost = commander.form(postSchema, ({ data }) => {
 	await db.updatePost(data);
 });
 ```
