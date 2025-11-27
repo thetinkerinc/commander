@@ -108,3 +108,6 @@ export const updatePost = commander.form(postSchema, ({ data }) => {
 	await db.updatePost(data);
 });
 ```
+
+**Notes on using schemas to access data**
+Commanders are meant to be generic, reusable wrapper functions around your remote functions. Any individual data validation or schema checks should be done in the remote function body, not in the commander. You should use the passed data when you have a set of remote functions which all accept the same or similar shapes of data and all need to pass a certain test before being run. For example, if all of your forms have hidden `userId` and `orgId` fields, you could use a commander to validate the user and the organization, and return the populated user object if it passes validation.
