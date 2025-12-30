@@ -28,7 +28,7 @@ export type Protector<
 
 export type ProtectedQuery<TCtx> = {
 	<TReturn>(
-		schemaOrFn: (args: { ctx: TCtx }) => TReturn,
+		schemaOrFn: (args: { ctx: Awaited<TCtx> }) => TReturn,
 		fn?: undefined
 	): RemoteQueryFunction<void, TReturn>;
 	<
@@ -37,13 +37,13 @@ export type ProtectedQuery<TCtx> = {
 		TParams = StandardSchemaV1.InferOutput<TSchema>
 	>(
 		schemaOrFn: TSchema,
-		fn: (args: { ctx: TCtx; params: TParams }) => TReturn
+		fn: (args: { ctx: Awaited<TCtx>; params: TParams }) => TReturn
 	): RemoteQueryFunction<TParams, TReturn>;
 };
 
 export type ProtectedForm<TCtx> = {
 	<TReturn>(
-		schemaOrFn: (args: { ctx: TCtx }) => TReturn,
+		schemaOrFn: (args: { ctx: Awaited<TCtx> }) => TReturn,
 		fn?: undefined
 	): RemoteForm<void, TReturn>;
 	<
@@ -53,13 +53,13 @@ export type ProtectedForm<TCtx> = {
 		TData = StandardSchemaV1.InferOutput<TSchema>
 	>(
 		schemaOrFn: TSchema,
-		fn: (args: { ctx: TCtx; data: TData }) => TReturn
+		fn: (args: { ctx: Awaited<TCtx>; data: TData }) => TReturn
 	): RemoteForm<TInput, TReturn>;
 };
 
 export type ProtectedCommand<TCtx> = {
 	<TReturn>(
-		schemaOrFn: (args: { ctx: TCtx }) => TReturn,
+		schemaOrFn: (args: { ctx: Awaited<TCtx> }) => TReturn,
 		fn?: undefined
 	): RemoteCommand<void, TReturn>;
 	<
@@ -68,6 +68,6 @@ export type ProtectedCommand<TCtx> = {
 		TData = StandardSchemaV1.InferOutput<TSchema>
 	>(
 		schemaOrFn: TSchema,
-		fn: (args: { ctx: TCtx; data: TData }) => TReturn
+		fn: (args: { ctx: Awaited<TCtx>; data: TData }) => TReturn
 	): RemoteCommand<TData, TReturn>;
 };
