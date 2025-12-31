@@ -41,16 +41,16 @@ export function makeCommander<TSchema extends StandardSchemaV1 | undefined, TCtx
 function makeProtectedQuery<TCtx>(protect: any): ProtectedQuery<TCtx> {
 	return ((schemaOrFn: any, fn?: any) => {
 		if (typeof schemaOrFn === 'function') {
-			return query(() => {
-				const ctx = protect({ event: getRequestEvent() });
+			return query(async () => {
+				const ctx = await protect({ event: getRequestEvent() });
 				return schemaOrFn({ ctx });
 			});
 		}
 		if (fn == null) {
 			throw new Error('query with a schema needs to define a handler function');
 		}
-		return query(schemaOrFn, (params) => {
-			const ctx = protect({ event: getRequestEvent(), data: params });
+		return query(schemaOrFn, async (params) => {
+			const ctx = await protect({ event: getRequestEvent(), data: params });
 			return fn({ ctx, params });
 		});
 	}) as ProtectedQuery<TCtx>;
