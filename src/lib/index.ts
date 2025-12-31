@@ -59,16 +59,16 @@ function makeProtectedQuery<TCtx>(protect: any): ProtectedQuery<TCtx> {
 function makeProtectedForm<TCtx>(protect: any): ProtectedForm<TCtx> {
 	return ((schemaOrFn: any, fn?: any) => {
 		if (typeof schemaOrFn === 'function') {
-			return form(() => {
-				const ctx = protect({ event: getRequestEvent() });
+			return form(async () => {
+				const ctx = await protect({ event: getRequestEvent() });
 				return schemaOrFn({ ctx });
 			});
 		}
 		if (fn == null) {
 			throw new Error('form with a schema needs to define a handler function');
 		}
-		return form(schemaOrFn, (data) => {
-			const ctx = protect({ event: getRequestEvent(), data });
+		return form(schemaOrFn, async (data) => {
+			const ctx = await protect({ event: getRequestEvent(), data });
 			return fn({ ctx, data });
 		});
 	}) as ProtectedForm<TCtx>;
@@ -77,16 +77,16 @@ function makeProtectedForm<TCtx>(protect: any): ProtectedForm<TCtx> {
 function makeProtectedCommand<TCtx>(protect: any): ProtectedCommand<TCtx> {
 	return ((schemaOrFn: any, fn?: any) => {
 		if (typeof schemaOrFn === 'function') {
-			return command(() => {
-				const ctx = protect({ event: getRequestEvent() });
+			return command(async () => {
+				const ctx = await protect({ event: getRequestEvent() });
 				return schemaOrFn({ ctx });
 			});
 		}
 		if (fn == null) {
 			throw new Error('command with a schema needs to define a handler function');
 		}
-		return command(schemaOrFn, (data) => {
-			const ctx = protect({ event: getRequestEvent(), data });
+		return command(schemaOrFn, async (data) => {
+			const ctx = await protect({ event: getRequestEvent(), data });
 			return fn({ ctx, data });
 		});
 	}) as ProtectedCommand<TCtx>;
