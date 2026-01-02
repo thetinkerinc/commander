@@ -7,7 +7,7 @@ import type {
 	ProtectedForm,
 	ProtectedCommand,
 	Commander
-} from './types.ts';
+} from './types';
 
 export function makeCommander<TCtx>(protector: ProtectorWithoutSchema<TCtx>): Commander<TCtx>;
 export function makeCommander<TSchema extends StandardSchemaV1, TCtx>(
