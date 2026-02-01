@@ -14,6 +14,10 @@ export type Commander<TCtx> = {
 	command: ProtectedCommand<TCtx>;
 };
 
+type IssueObject<TData> = {
+	[K in keyof TData]: (message?: string) => StandardSchemaV1.Issue;
+};
+
 export type ProtectorWithoutSchema<TCtx> = (args: { event: RequestEvent }) => TCtx;
 export type ProtectorWithSchema<TSchema extends StandardSchemaV1, TCtx> = (args: {
 	event: RequestEvent;
@@ -53,7 +57,7 @@ export type ProtectedForm<TCtx> = {
 		TData = StandardSchemaV1.InferOutput<TSchema>
 	>(
 		schemaOrFn: TSchema,
-		fn: (args: { ctx: Awaited<TCtx>; data: TData }) => TReturn
+		fn: (args: { ctx: Awaited<TCtx>; data: TData; issue: IssueObject<TData> }) => TReturn
 	): RemoteForm<TInput, TReturn>;
 };
 

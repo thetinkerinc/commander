@@ -67,9 +67,9 @@ function makeProtectedForm<TCtx>(protect: any): ProtectedForm<TCtx> {
 		if (fn == null) {
 			throw new Error('form with a schema needs to define a handler function');
 		}
-		return form(schemaOrFn, async (data) => {
+		return form(schemaOrFn, async (data, issue) => {
 			const ctx = await protect({ event: getRequestEvent(), data });
-			return fn({ ctx, data });
+			return fn({ ctx, data, issue });
 		});
 	}) as ProtectedForm<TCtx>;
 }
