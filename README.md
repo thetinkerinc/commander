@@ -63,7 +63,7 @@ You use the `makeCommander` function to make reusable authentication schemes for
 ```typescript
 commander = makeCommander(({ event, data }) => any);
 commander.query(schema, async ({ ctx, params }) => any);
-commander.form(schema, async ({ ctx, data }) => any);
+commander.form(schema, async ({ ctx, data, issue }) => any);
 commander.command(schema, async ({ ctx, data }) => any);
 ```
 
@@ -106,6 +106,18 @@ export const createPost = commander.form(postSchema, ({ ctx, data }) => {
 
 export const updatePost = commander.form(postSchema, ({ data }) => {
 	await db.updatePost(data);
+});
+```
+
+When using [forms](https://svelte.dev/docs/kit/remote-functions#form), you'll also have access to the `issue` parameter used for [programmatic validation](https://svelte.dev/docs/kit/remote-functions#form-Programmatic-validation).
+
+```typescript
+export const makeWithdrawal = commander.form(withdrawalSchema, async ({ ctx, data, issue }) => {
+	const balance = await db.getAccountBalance(ctx.userId);
+	if (data.amount > balance) {
+		invalid(issue.amount('You can not withdraw more than your total balance'));
+	}
+	await db.withdraw(ctx.userId, data.amount);
 });
 ```
 
