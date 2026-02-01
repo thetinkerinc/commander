@@ -191,7 +191,7 @@ function shrink(
 							<input
 								class="mb-1 block rounded border border-slate-300 px-2 py-1"
 								{...checkName.fields.name.as('text')} />
-							<Button {...checkName.buttonProps.enhance(enhance)}>Send</Button>
+							<Button {...checkName}>Send</Button>
 						</form>
 					</div>
 				{/if}
