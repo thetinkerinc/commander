@@ -1,4 +1,4 @@
-import { query, form, command } from '$app/server';
+import { query, command } from '$app/server';
 import type { StandardSchemaV1 } from '@standard-schema/spec';
 import type {
 	RemoteQueryFunction,
@@ -58,7 +58,12 @@ export type ProtectedForm<TCtx> = {
 		fn?: undefined
 	): RemoteForm<void, TReturn>;
 	<
-		TSchema extends Parameters<typeof form>[0],
+		// form()'s own last overload's first parameter is a conditional type (a compile-time
+		// "did you forget v.optional() on a boolean field" guard), unlike query()/command()'s
+		// plain `Schema extends StandardSchemaV1`, so Parameters<typeof form>[0] resolves to
+		// that conditional mess instead of a usable schema constraint — constrain directly
+		// against StandardSchemaV1 instead of going through Parameters<typeof form> at all.
+		TSchema extends StandardSchemaV1<RemoteFormInput, Record<string, any>>,
 		TReturn,
 		TData = StandardSchemaV1.InferOutput<TSchema>,
 		TInput extends RemoteFormInput = StandardSchemaV1.InferInput<TSchema>
