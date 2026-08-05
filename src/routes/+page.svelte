@@ -53,17 +53,17 @@ async function query() {
 	}
 }
 
-async function enhance({ form, submit }: CheckNameEnhanceParams) {
+async function enhance(form: CheckNameEnhanceParams) {
 	try {
 		resetField('form');
-		await submit();
+		await form.submit();
 		if (checkName.result) {
 			responses.form = checkName.result;
 		}
 	} catch (err) {
 		handleError(err, 'form');
 	} finally {
-		form.reset();
+		form.element.reset();
 	}
 }
 
