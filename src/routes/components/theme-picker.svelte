@@ -1,5 +1,5 @@
 <script lang="ts">
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import Sun from '@lucide/svelte/icons/sun';
 import Moon from '@lucide/svelte/icons/moon';
 
@@ -23,6 +23,7 @@ function getInitialTheme(): Theme {
 	if (!browser) {
 		return 'light';
 	}
+
 	return (
 		(localStorage?.getItem('theme') as Theme) ??
 		(window?.matchMedia('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light')

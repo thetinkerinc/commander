@@ -14,7 +14,7 @@ import { getSecret, checkName, adventure } from './data.remote.ts';
 import Example from './components/example.svelte';
 import Install from './components/install.svelte';
 import MakeCommander from './components/make-commander.svelte';
-import Remote from './components/remote.svelte';
+import Remote from './components/remote-demo.svelte';
 import Button from './components/button.svelte';
 
 import type { TransitionConfig } from 'svelte/transition';

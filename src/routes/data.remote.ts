@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit';
 import * as v from 'valibot';
 import * as _ from 'radashi';
 
-import { makeCommander } from '$lib/index.ts';
+import { makeCommander } from '#lib/index.ts';
 
 import responses from './responses.ts';
 

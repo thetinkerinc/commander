@@ -1,12 +1,15 @@
-import { query, command } from '$app/server';
+import type { RequestEvent } from '@sveltejs/kit';
+
+import {
+	query,
+	command,
+	type RemoteQueryFunction,
+	type RemoteForm,
+	type RemoteFormInput,
+	type RemoteCommand
+} from '$app/server';
+
 import type { StandardSchemaV1 } from '@standard-schema/spec';
-import type {
-	RemoteQueryFunction,
-	RemoteForm,
-	RemoteFormInput,
-	RemoteCommand,
-	RequestEvent
-} from '@sveltejs/kit';
 
 export type Commander<TCtx> = {
 	query: ProtectedQuery<TCtx>;
@@ -30,6 +33,7 @@ export type ProtectorWithSchema<TSchema extends StandardSchemaV1, TCtx> = (args:
 	event: RequestEvent;
 	data: StandardSchemaV1.InferOutput<TSchema>;
 }) => TCtx;
+
 export type Protector<
 	TSchema extends StandardSchemaV1 | undefined,
 	TCtx
