@@ -1,12 +1,11 @@
 import type { RequestEvent } from '@sveltejs/kit';
 
-import {
-	query,
-	command,
-	type RemoteQueryFunction,
-	type RemoteForm,
-	type RemoteFormInput,
-	type RemoteCommand
+import type {
+	RemoteQueryFunction,
+	RemoteForm,
+	RemoteFormInput,
+	RemoteFormInvalidField,
+	RemoteCommand
 } from '$app/server';
 
 import type { StandardSchemaV1 } from '@standard-schema/spec';
@@ -17,9 +16,8 @@ export type Commander<TCtx> = {
 	command: ProtectedCommand<TCtx>;
 };
 
-type IssueObject<TData> = {
-	[K in keyof TData]: (message?: string) => StandardSchemaV1.Issue;
-};
+type Input<TSchema extends StandardSchemaV1> = StandardSchemaV1.InferInput<TSchema>;
+type Output<TSchema extends StandardSchemaV1> = StandardSchemaV1.InferOutput<TSchema>;
 
 // Not exported from '@sveltejs/kit' (it's declared but unexported inside '$app/server''s own
 // module augmentation), so re-declared here — needed so an async handler's `TReturn` infers as
@@ -27,6 +25,25 @@ type IssueObject<TData> = {
 // the function itself returns. Without this, `RemoteForm<TInput, TReturn>`'s `.result` ends up
 // typed as a Promise, breaking direct access like `someForm.result?.success`.
 type MaybePromise<T> = T | Promise<T>;
+
+// Also unexported from '$app/server': form()'s compile-time guard that every boolean in a form
+// schema is optional (an unchecked checkbox submits nothing). Re-declared so commander.form() keeps
+// the same error kit's form() gives.
+type IsAny<T> = 0 extends 1 & T ? true : false;
+type HasNonOptionalBoolean<T> =
+	IsAny<T> extends true
+		? never
+		: [T] extends [boolean]
+			? true
+			: T extends Array<infer U>
+				? HasNonOptionalBoolean<U>
+				: T extends Record<string, any>
+					? { [K in keyof T]: HasNonOptionalBoolean<T[K]> }[keyof T]
+					: never;
+type FormSchemaGuard<TSchema extends StandardSchemaV1> =
+	true extends HasNonOptionalBoolean<Input<TSchema>>
+		? 'Error: All booleans in form schemas must be optional (e.g. `v.optional(v.boolean(), false)`) because checkbox inputs do not send a false value when unchecked.'
+		: TSchema;
 
 export type ProtectorWithoutSchema<TCtx> = (args: { event: RequestEvent }) => TCtx;
 export type ProtectorWithSchema<TSchema extends StandardSchemaV1, TCtx> = (args: {
@@ -46,14 +63,12 @@ export type ProtectedQuery<TCtx> = {
 		schemaOrFn: (args: { ctx: Awaited<TCtx> }) => MaybePromise<TReturn>,
 		fn?: undefined
 	): RemoteQueryFunction<void, TReturn>;
-	<
-		TSchema extends Parameters<typeof query>[0],
-		TReturn,
-		TParams = StandardSchemaV1.InferOutput<TSchema>
-	>(
+	// Mirrors kit's query(schema, fn): the handler gets the validated output, while callers pass
+	// the schema's input (they differ whenever the schema transforms, e.g. a string → number).
+	<TSchema extends StandardSchemaV1, TReturn>(
 		schemaOrFn: TSchema,
-		fn: (args: { ctx: Awaited<TCtx>; params: TParams }) => MaybePromise<TReturn>
-	): RemoteQueryFunction<TParams, TReturn>;
+		fn: (args: { ctx: Awaited<TCtx>; params: Output<TSchema> }) => MaybePromise<TReturn>
+	): RemoteQueryFunction<Input<TSchema>, TReturn, Output<TSchema>>;
 };
 
 export type ProtectedForm<TCtx> = {
@@ -61,24 +76,16 @@ export type ProtectedForm<TCtx> = {
 		schemaOrFn: (args: { ctx: Awaited<TCtx> }) => MaybePromise<TReturn>,
 		fn?: undefined
 	): RemoteForm<void, TReturn>;
-	<
-		// form()'s own last overload's first parameter is a conditional type (a compile-time
-		// "did you forget v.optional() on a boolean field" guard), unlike query()/command()'s
-		// plain `Schema extends StandardSchemaV1`, so Parameters<typeof form>[0] resolves to
-		// that conditional mess instead of a usable schema constraint — constrain directly
-		// against StandardSchemaV1 instead of going through Parameters<typeof form> at all.
-		TSchema extends StandardSchemaV1<RemoteFormInput, Record<string, any>>,
-		TReturn,
-		TData = StandardSchemaV1.InferOutput<TSchema>,
-		TInput extends RemoteFormInput = StandardSchemaV1.InferInput<TSchema>
-	>(
-		schemaOrFn: TSchema,
+	// Mirrors kit's form(schema, fn), including its `issue` type: a proxy shaped like the schema's
+	// input, so nested and array fields work (`issue.guardians[1].email('Taken')`).
+	<TSchema extends StandardSchemaV1<RemoteFormInput, Record<string, any>>, TReturn>(
+		schemaOrFn: FormSchemaGuard<TSchema>,
 		fn: (args: {
 			ctx: Awaited<TCtx>;
-			data: TData;
-			issue: IssueObject<TData>;
+			data: Output<TSchema>;
+			issue: RemoteFormInvalidField<Input<TSchema>>;
 		}) => MaybePromise<TReturn>
-	): RemoteForm<TInput, TReturn>;
+	): RemoteForm<Input<TSchema>, TReturn>;
 };
 
 export type ProtectedCommand<TCtx> = {
@@ -86,12 +93,9 @@ export type ProtectedCommand<TCtx> = {
 		schemaOrFn: (args: { ctx: Awaited<TCtx> }) => MaybePromise<TReturn>,
 		fn?: undefined
 	): RemoteCommand<void, TReturn>;
-	<
-		TSchema extends Parameters<typeof command>[0],
-		TReturn,
-		TData = StandardSchemaV1.InferOutput<TSchema>
-	>(
+	// Callers pass the schema's input; the handler gets the validated output.
+	<TSchema extends StandardSchemaV1, TReturn>(
 		schemaOrFn: TSchema,
-		fn: (args: { ctx: Awaited<TCtx>; data: TData }) => MaybePromise<TReturn>
-	): RemoteCommand<TData, TReturn>;
+		fn: (args: { ctx: Awaited<TCtx>; data: Output<TSchema> }) => MaybePromise<TReturn>
+	): RemoteCommand<Input<TSchema>, TReturn>;
 };

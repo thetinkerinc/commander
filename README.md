@@ -121,6 +121,8 @@ export const makeWithdrawal = commander.form(withdrawalSchema, async ({ ctx, dat
 });
 ```
 
+`issue` has the same type as SvelteKit's own, so it follows your schema's shape: nested objects and arrays work (`issue.contacts[1].email('Already taken')`), and calling `issue('...')` directly creates a form-level issue.
+
 **Notes on using schemas to access data**
 
 Commanders are meant to be generic, reusable wrapper functions around your remote functions. Any individual data validation or schema checks should be done in the remote function body, not in the commander. You should use the passed data when you have a set of remote functions which all accept the same or similar shapes of data and all need to pass a certain test before being run.
